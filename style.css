@@ -26,7 +26,6 @@ body {
   line-height: 1.6;
 }
 
-/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -73,7 +72,6 @@ body {
   color: white;
 }
 
-/* Hero Section */
 .hero {
   position: relative;
   height: 500px;
@@ -130,7 +128,6 @@ body {
   line-height: 1.8;
 }
 
-/* Buttons */
 .btn {
   display: inline-block;
   padding: 0.875rem 2rem;
@@ -184,7 +181,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Impact Section */
 .impact-section {
   padding: 4rem 5%;
   background-color: var(--primary);
@@ -222,7 +218,6 @@ body {
   margin-top: 0.5rem;
 }
 
-/* Features Section */
 .features-section {
   padding: 4rem 5%;
   background-color: var(--surface);
@@ -278,7 +273,7 @@ body {
   color: var(--text-secondary);
 }
 
-/* Forms */
+
 .form-container {
   max-width: 500px;
   margin: 2rem auto;
@@ -405,7 +400,6 @@ body {
   border: 1px solid var(--success);
 }
 
-/* Dashboard */
 .dashboard {
   display: flex;
   min-height: 100vh;
@@ -487,7 +481,6 @@ body {
   font-weight: 600;
 }
 
-/* Cards */
 .card {
   background-color: var(--surface);
   border-radius: 12px;
@@ -502,7 +495,6 @@ body {
   font-size: 1.25rem;
 }
 
-/* Tables */
 .table-container {
   overflow-x: auto;
 }
@@ -529,7 +521,6 @@ tr:hover {
   background-color: var(--background);
 }
 
-/* Status Badges */
 .status-badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
@@ -553,7 +544,6 @@ tr:hover {
   color: #1976D2;
 }
 
-/* Footer */
 .footer {
   background-color: var(--primary-dark);
   color: white;
@@ -566,7 +556,6 @@ tr:hover {
   opacity: 0.9;
 }
 
-/* Page Wrapper for Auth Pages */
 .page-wrapper {
   min-height: 100vh;
   display: flex;
@@ -578,7 +567,6 @@ tr:hover {
   padding: 2rem 5%;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .hero h1 {
     font-size: 2rem;
@@ -605,7 +593,6 @@ tr:hover {
   }
 }
 
-/* Loading Spinner */
 .spinner {
   display: inline-block;
   width: 20px;
