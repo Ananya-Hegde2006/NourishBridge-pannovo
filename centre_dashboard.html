@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Service Centre Dashboard - NourishBridge</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <h2>NourishBridge</h2>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active">Dashboard</a></li>
+        <li><a href="#available">Available Food</a></li>
+        <li><a href="#requests">My Requests</a></li>
+        <li><a href="index.html" id="logoutBtn">Logout</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <h1>Social Service Centre Dashboard</h1>
+        <div class="user-info">
+          <span id="centreNameDisplay">Welcome</span>
+          <div class="user-avatar" id="userAvatar">C</div>
+        </div>
+      </header>
+
+      <!-- Stats -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+        <div class="card" style="text-align: center;">
+          <span style="font-size: 2rem; font-weight: 700; color: var(--primary);" id="availableCount">0</span>
+          <p style="color: var(--text-secondary);">Available Donations</p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <span style="font-size: 2rem; font-weight: 700; color: var(--secondary);" id="pickedCount">0</span>
+          <p style="color: var(--text-secondary);">Food Picked</p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <span style="font-size: 2rem; font-weight: 700; color: #1976D2;" id="deliveredCount">0</span>
+          <p style="color: var(--text-secondary);">Delivered</p>
+        </div>
+      </div>
+
+      <div id="centreAlert" class="alert"></div>
+
+      <!-- Available Food Donations -->
+      <div class="card" id="available">
+        <h2>Available Food Donations</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Food available from restaurants and bakeries in Mangalore</p>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Restaurant</th>
+                <th>Food Item</th>
+                <th>Quantity</th>
+                <th>Pickup Deadline</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="availableFoodTable">
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-secondary);">Loading available donations...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- My Requests -->
+      <div class="card" id="requests">
+        <h2>My Food Requests</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Restaurant</th>
+                <th>Food Item</th>
+                <th>Quantity</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="myRequestsTable">
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-secondary);">No requests yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Nearby Centres Reference -->
+      <div class="card">
+        <h2>Social Service Centres in Mangalore</h2>
+        <div class="features-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+          <div style="padding: 1rem; background: var(--background); border-radius: 8px; text-align: center;">
+            <strong>Inchara Foundation</strong>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Mangalore</p>
+          </div>
+          <div style="padding: 1rem; background: var(--background); border-radius: 8px; text-align: center;">
+            <strong>Riya Foundation</strong>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Mangalore</p>
+          </div>
+          <div style="padding: 1rem; background: var(--background); border-radius: 8px; text-align: center;">
+            <strong>C.O.D.P NGO</strong>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Mangalore</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Check if user is logged in
+    const user = JSON.parse(sessionStorage.getItem('user') || 'null');
+    const userType = sessionStorage.getItem('userType');
+    
+    if (!user || userType !== 'centre') {
+      window.location.href = 'centre_login.html';
+    } else {
+      // Populate user info
+      document.getElementById('centreNameDisplay').textContent = user.centreName || 'Centre';
+      document.getElementById('userAvatar').textContent = (user.centreName || 'C').charAt(0).toUpperCase();
+    }
+    
+    // Load donations
+    loadDonations();
+    
+    async function loadDonations() {
+      try {
+        const response = await fetch('/api/donations');
+        if (response.ok) {
+          const donations = await response.json();
+          updateTables(donations);
+          updateStats(donations);
+        }
+      } catch (error) {
+        console.log('Error loading donations:', error);
+      }
+    }
+    
+    function updateStats(donations) {
+      const available = donations.filter(d => d.status === 'Available').length;
+      const picked = donations.filter(d => d.status === 'Picked').length;
+      const delivered = donations.filter(d => d.status === 'Delivered').length;
+      
+      document.getElementById('availableCount').textContent = available;
+      document.getElementById('pickedCount').textContent = picked;
+      document.getElementById('deliveredCount').textContent = delivered;
+    }
+    
+    function updateTables(donations) {
+      const availableTable = document.getElementById('availableFoodTable');
+      const requestsTable = document.getElementById('myRequestsTable');
+      
+      // Available donations
+      const availableDonations = donations.filter(d => d.status === 'Available');
+      if (availableDonations.length === 0) {
+        availableTable.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-secondary);">No food donations available at the moment.</td></tr>';
+      } else {
+        availableTable.innerHTML = availableDonations.map(d => `
+          <tr>
+            <td>${d.restaurantName}</td>
+            <td>${d.foodItem}</td>
+            <td>${d.quantity}</td>
+            <td>${new Date(d.pickupDeadline).toLocaleString()}</td>
+            <td>${d.phone}</td>
+            <td style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${d.address}</td>
+            <td>
+              <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="requestFood('${d.id}')">
+                Request
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+      
+      // My requests (picked by this centre)
+      const myRequests = donations.filter(d => d.requestedBy === user.email);
+      if (myRequests.length === 0) {
+        requestsTable.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary);">No requests yet. Request food from available donations above.</td></tr>';
+      } else {
+        requestsTable.innerHTML = myRequests.map(d => `
+          <tr>
+            <td>${d.restaurantName}</td>
+            <td>${d.foodItem}</td>
+            <td>${d.quantity}</td>
+            <td><span class="status-badge status-${d.status.toLowerCase()}">${d.status}</span></td>
+            <td>
+              ${d.status === 'Picked' ? `
+                <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.875rem;" onclick="markDelivered('${d.id}')">
+                  Mark Delivered
+                </button>
+              ` : '-'}
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+    
+    async function requestFood(donationId) {
+      const alert = document.getElementById('centreAlert');
+      
+      try {
+        const response = await fetch(`/api/request_food/${donationId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ centreEmail: user.email, centreName: user.centreName })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert.className = 'alert alert-success show';
+          alert.textContent = 'Food requested successfully! Please coordinate pickup with the restaurant.';
+          loadDonations();
+        } else {
+          alert.className = 'alert alert-error show';
+          alert.textContent = result.detail || 'Failed to request food.';
+        }
+      } catch (error) {
+        alert.className = 'alert alert-error show';
+        alert.textContent = 'Network error. Please try again.';
+      }
+      
+      setTimeout(() => {
+        alert.className = 'alert';
+      }, 5000);
+    }
+    
+    async function markDelivered(donationId) {
+      const alert = document.getElementById('centreAlert');
+      
+      try {
+        const response = await fetch(`/api/mark_delivered/${donationId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert.className = 'alert alert-success show';
+          alert.textContent = 'Food marked as delivered! Thank you for helping the community.';
+          loadDonations();
+        } else {
+          alert.className = 'alert alert-error show';
+          alert.textContent = result.detail || 'Failed to update status.';
+        }
+      } catch (error) {
+        alert.className = 'alert alert-error show';
+        alert.textContent = 'Network error. Please try again.';
+      }
+      
+      setTimeout(() => {
+        alert.className = 'alert';
+      }, 5000);
+    }
+    
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+      sessionStorage.clear();
+    });
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadDonations, 30000);
+  </script>
+</body>
+</html>

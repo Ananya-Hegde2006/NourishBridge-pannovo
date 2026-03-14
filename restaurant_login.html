@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Login - NourishBridge</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="index.html" class="navbar-brand">
+        Nourish<span>Bridge</span>
+      </a>
+      <ul class="navbar-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#register">Register</a></li>
+      </ul>
+    </nav>
+
+    <div class="page-content">
+      <div class="form-container" style="max-width: 400px;">
+        <div class="form-header">
+          <h1>Restaurant Login</h1>
+          <p>Access your dashboard to donate food</p>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="restaurant@example.com">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required placeholder="Enter your password">
+          </div>
+
+          <button type="submit" class="btn btn-primary form-submit" id="submitBtn">
+            Login
+          </button>
+        </form>
+
+        <p class="form-footer">
+          Don't have an account? <a href="restaurant_register.html">Register here</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>NourishBridge - Serving Mangalore with love and care</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const alert = document.getElementById('alert');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Logging in...';
+      
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, type: 'restaurant' })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          // Store user data in sessionStorage
+          sessionStorage.setItem('user', JSON.stringify(result.user));
+          sessionStorage.setItem('userType', 'restaurant');
+          
+          alert.className = 'alert alert-success show';
+          alert.textContent = 'Login successful! Redirecting...';
+          
+          setTimeout(() => {
+            window.location.href = 'restaurant_dashboard.html';
+          }, 1000);
+        } else {
+          alert.className = 'alert alert-error show';
+          alert.textContent = result.detail || 'Invalid email or password.';
+        }
+      } catch (error) {
+        alert.className = 'alert alert-error show';
+        alert.textContent = 'Network error. Please try again.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Login';
+      }
+    });
+  </script>
+</body>
+</html>

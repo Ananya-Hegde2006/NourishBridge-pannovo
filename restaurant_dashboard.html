@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Dashboard - NourishBridge</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <h2>NourishBridge</h2>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active">Dashboard</a></li>
+        <li><a href="#donate">Donate Food</a></li>
+        <li><a href="#history">Donation History</a></li>
+        <li><a href="index.html" id="logoutBtn">Logout</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <h1>Restaurant Dashboard</h1>
+        <div class="user-info">
+          <span id="restaurantNameDisplay">Welcome</span>
+          <div class="user-avatar" id="userAvatar">R</div>
+        </div>
+      </header>
+
+      <!-- Donation Form -->
+      <div class="card" id="donate">
+        <h2>Donate Surplus Food</h2>
+        <div id="donateAlert" class="alert"></div>
+        
+        <form id="donationForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="restaurantName">Restaurant Name</label>
+              <input type="text" id="restaurantName" name="restaurantName" required>
+            </div>
+            <div class="form-group">
+              <label for="foodItem">Food Item *</label>
+              <input type="text" id="foodItem" name="foodItem" required placeholder="e.g., Veg Meals, Rice & Curry">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="quantity">Quantity *</label>
+              <input type="text" id="quantity" name="quantity" required placeholder="e.g., 20 plates, 5 kg">
+            </div>
+            <div class="form-group">
+              <label for="preparedTime">Prepared Time *</label>
+              <input type="time" id="preparedTime" name="preparedTime" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pickupDeadline">Pickup Deadline *</label>
+              <input type="datetime-local" id="pickupDeadline" name="pickupDeadline" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number *</label>
+              <input type="tel" id="phone" name="phone" required maxlength="10">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Restaurant Address *</label>
+            <textarea id="address" name="address" required rows="2" placeholder="Full address for pickup"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="donateBtn">
+            Donate Food
+          </button>
+        </form>
+      </div>
+
+      <!-- Sample Restaurants Reference -->
+      <div class="card">
+        <h2>Popular Donors in Mangalore</h2>
+        <div class="features-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+          <div style="padding: 1rem; background: var(--background); border-radius: 8px; text-align: center;">
+            <strong>Sai Palace</strong>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Veg Meals</p>
+          </div>
+          <div style="padding: 1rem; background: var(--background); border-radius: 8px; text-align: center;">
+            <strong>Girimanjas</strong>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Rice & Curry</p>
+          </div>
+          <div style="padding: 1rem; background: var(--background); border-radius: 8px; text-align: center;">
+            <strong>City Bakery</strong>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Bread & Pastries</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Donation History -->
+      <div class="card" id="history">
+        <h2>My Donation History</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Food Item</th>
+                <th>Quantity</th>
+                <th>Pickup Deadline</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="donationTableBody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-secondary);">No donations yet. Start donating!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Check if user is logged in
+    const user = JSON.parse(sessionStorage.getItem('user') || 'null');
+    const userType = sessionStorage.getItem('userType');
+    
+    if (!user || userType !== 'restaurant') {
+      window.location.href = 'restaurant_login.html';
+    } else {
+      // Populate user info
+      document.getElementById('restaurantNameDisplay').textContent = user.restaurantName || 'Restaurant';
+      document.getElementById('restaurantName').value = user.restaurantName || '';
+      document.getElementById('phone').value = user.phone || '';
+      document.getElementById('address').value = user.address ? 
+        `${user.address.street}, ${user.address.area}, ${user.address.city} - ${user.address.pincode}` : '';
+      document.getElementById('userAvatar').textContent = (user.restaurantName || 'R').charAt(0).toUpperCase();
+    }
+    
+    // Set default pickup deadline to 4 hours from now
+    const now = new Date();
+    now.setHours(now.getHours() + 4);
+    document.getElementById('pickupDeadline').value = now.toISOString().slice(0, 16);
+    
+    // Load donation history
+    loadDonations();
+    
+    async function loadDonations() {
+      try {
+        const response = await fetch('/api/donations');
+        if (response.ok) {
+          const donations = await response.json();
+          const myDonations = donations.filter(d => d.restaurantEmail === user.email);
+          updateDonationTable(myDonations);
+        }
+      } catch (error) {
+        console.log('Error loading donations:', error);
+      }
+    }
+    
+    function updateDonationTable(donations) {
+      const tbody = document.getElementById('donationTableBody');
+      
+      if (donations.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-secondary);">No donations yet. Start donating!</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = donations.map(d => `
+        <tr>
+          <td>${d.foodItem}</td>
+          <td>${d.quantity}</td>
+          <td>${new Date(d.pickupDeadline).toLocaleString()}</td>
+          <td><span class="status-badge status-${d.status.toLowerCase()}">${d.status}</span></td>
+        </tr>
+      `).join('');
+    }
+    
+    // Handle donation form
+    document.getElementById('donationForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const alert = document.getElementById('donateAlert');
+      const submitBtn = document.getElementById('donateBtn');
+      
+      const donationData = {
+        restaurantName: document.getElementById('restaurantName').value,
+        restaurantEmail: user.email,
+        foodItem: document.getElementById('foodItem').value,
+        quantity: document.getElementById('quantity').value,
+        preparedTime: document.getElementById('preparedTime').value,
+        pickupDeadline: document.getElementById('pickupDeadline').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        status: 'Available'
+      };
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+      
+      try {
+        const response = await fetch('/api/add_food', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(donationData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert.className = 'alert alert-success show';
+          alert.textContent = 'Food donation submitted successfully! Nearby centres will be notified.';
+          
+          // Clear form (except pre-filled fields)
+          document.getElementById('foodItem').value = '';
+          document.getElementById('quantity').value = '';
+          document.getElementById('preparedTime').value = '';
+          
+          // Reload donations
+          loadDonations();
+        } else {
+          alert.className = 'alert alert-error show';
+          alert.textContent = result.detail || 'Failed to submit donation.';
+        }
+      } catch (error) {
+        alert.className = 'alert alert-error show';
+        alert.textContent = 'Network error. Please try again.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Donate Food';
+      }
+    });
+    
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+      sessionStorage.clear();
+    });
+  </script>
+</body>
+</html>

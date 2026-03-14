@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NourishBridge - Connecting Surplus Food with Communities</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">
+      Nourish<span>Bridge</span>
+    </a>
+    <ul class="navbar-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#register">Register</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <img 
+      src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600&q=80" 
+      alt="People receiving food donations" 
+      class="hero-image"
+    >
+    <div class="hero-content">
+      <h1>NourishBridge</h1>
+      <p class="tagline">"Connecting surplus food with communities that need it most."</p>
+      <p class="hero-description">
+        NourishBridge helps restaurants and bakeries donate surplus food to nearby social service centres. 
+        Instead of letting good food go to waste, we help ensure it reaches communities in need.
+      </p>
+      <div class="btn-group">
+        <a href="restaurant_login.html" class="btn btn-primary">Donate Food</a>
+        <a href="centre_login.html" class="btn btn-secondary">Request Food</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Tracker Section -->
+  <section class="impact-section">
+    <h2>Our Impact in Mangalore</h2>
+    <div class="impact-stats">
+      <div class="stat-card">
+        <span class="stat-number">1,250</span>
+        <p class="stat-label">Meals Served</p>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">380 kg</span>
+        <p class="stat-label">Food Rescued</p>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">3</span>
+        <p class="stat-label">Social Centres Supported</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features Section -->
+  <section class="features-section">
+    <h2>Key Features</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+        </div>
+        <h3>Smart Matching System</h3>
+        <p>When a restaurant uploads surplus food, our system suggests nearby social service centres in Mangalore for quick and efficient delivery.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <h3>Community Volunteer Support</h3>
+        <p>Local volunteers help with food pickup and delivery, ensuring that surplus food reaches those in need quickly and safely.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+          </svg>
+        </div>
+        <h3>Impact Tracker</h3>
+        <p>Track the real difference you're making - see meals served, food rescued, and the number of centres supported in real-time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Register Section -->
+  <section id="register" class="features-section" style="background-color: var(--background);">
+    <h2>Join NourishBridge Today</h2>
+    <div class="register-options">
+      <div class="register-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3h18v18H3zM12 8v8M8 12h8"></path>
+          </svg>
+        </div>
+        <h3>Restaurant / Bakery</h3>
+        <p>Donate your surplus food and make a difference in your community.</p>
+        <a href="restaurant_register.html" class="btn btn-primary" style="width: 100%;">Register Now</a>
+      </div>
+      <div class="register-card">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <h3>Social Service Centre</h3>
+        <p>Request food donations for your community members in need.</p>
+        <a href="centre_register.html" class="btn btn-primary" style="width: 100%;">Register Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>NourishBridge - Serving Mangalore with love and care</p>
+    <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.7;">A Hackathon Prototype Project</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
